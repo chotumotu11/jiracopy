@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap-theme.css';
+import {Nav , Navbar  , NavItem , Form , FormGroup , ControlLabel , FormControl , Button , Grid , Row , Col } from 'react-bootstrap';
 import './index.css';
-
 class SubmitForm extends React.Component {
     constructor(props){
         super(props);
@@ -31,23 +33,30 @@ class SubmitForm extends React.Component {
     }
     render() {
         return (
-          <form onSubmit={this.handleSubmit}>
-            <label>
-              Title:
-            </label>
-            <input name="title" type="text" onChange={this.handleOnChange} value={this.state.title} />
-            <label>
-              Description:
-              <textarea value={this.state.text} name="description" type="text" onChange={this.handleOnChange} />
-            </label>
-            <label>
-              Select Tag:
-              <select name="tags" onChange={this.handleOnChange}  >
+          <Form onSubmit={this.handleSubmit} inline>
+            <FormGroup  controlId="formInlineName">
+              <ControlLabel>Title</ControlLabel>
+              {' '}
+              <FormControl name="title" type="text" onChange={this.handleOnChange} value={this.state.title} />
+            </FormGroup>
+            {' '}
+            <FormGroup>
+              <ControlLabel>Description </ControlLabel>
+              {' '}
+              <FormControl componentClass="textarea" value={this.state.text} name="description" type="text" onChange={this.handleOnChange} />
+            </FormGroup>
+            {' '}
+            <FormGroup>
+              <ControlLabel>Select Tag</ControlLabel>
+              {' '}
+              <FormControl componentClass="select" name="tags" onChange={this.handleOnChange}  >
                 {this.props.tags.map((x,index) => (<option key={index} value={index}>{x} </option>))}
-              </select>
-            </label>
-            <button bsStyle="primary">Submit</button>
-          </form>
+              </FormControl>
+            </FormGroup>
+            <p>
+              <Button bsStyle="success" type="submit">Submit</Button>
+            </p>
+          </Form>
         );
     }
 }
@@ -70,7 +79,7 @@ class DisplayListAndForm extends React.Component {
     <div>
       <SubmitForm add={this.props.add} tags={this.props.tags} />
       <h2>ALL Issues</h2>
-      <div>{this.props.value.map((li,index) => <p onClick={this.assignDetails} id={index}  key={index}>Title {li.title}   Tags {this.props.tags[li.tags]} </p> )} </div>
+      <Row>{this.props.value.map((li,index) => <Col className="design" xs={6} sm={2} onClick={this.assignDetails} id={index}  key={index}>  Title {li.title} <br/> Tags {this.props.tags[li.tags]} </Col>) } </Row>
     </div>
     );
   }
@@ -99,12 +108,15 @@ class SearchByTag extends React.Component {
     return (
       <div>
         <h2>Add new tag</h2>
-        <form onSubmit={this.addnewtag}>
-          <label>
-            <input type="text" name="addtags" onChange={this.handleOnChange} value={this.state.value} />
-            <input type="submit" value="Submit" />
-          </label>
-        </form>
+        <Form onSubmit={this.addnewtag} inline>
+          <FormGroup>
+            <ControlLabel>New Tag</ControlLabel>
+            {' '}
+            <FormControl type="text" name="addtags" onChange={this.handleOnChange} value={this.state.value} />
+          </FormGroup>
+          {' '}
+          <Button bsStyle="warning" type="submit">Submit</Button>
+        </Form>
         <h2> All Tags </h2>
         {this.props.tags.map((x,index) => (<li key={index}> {x} </li>))}
       </div>
@@ -183,11 +195,15 @@ class MainDisplay extends React.Component {
     }
 
     return (
-      <div>
-        <p onClick={() => this.setIsDisplay(true)}>Form </p>
-        <p onClick={() => this.setIsDisplay(false)}>Labels </p>
+      <Grid>
+        <Navbar inverse collapseOnSelect >
+          <Nav bsStyle="pills" activeKey={1}>
+            <NavItem eventKey={1} onClick={() => this.setIsDisplay(true)}>Form </NavItem>
+            <NavItem eventKey={2} onClick={() => this.setIsDisplay(false)}>Labels </NavItem>
+          </Nav>
+        </Navbar>
         {myDisplay}
-      </div>
+      </Grid>
     );
   }
 }
