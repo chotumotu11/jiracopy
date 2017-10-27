@@ -5,20 +5,17 @@ import './index.css';
 class SubmitForm extends React.Component {
     constructor(props){
         super(props);
-        this.state = {title: "",text: "", tags: ""};
+        this.state = {title: "",text: "", tags: 0};
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleOnChange = this.handleOnChange.bind(this);
     }
 
     handleSubmit(event){
       if(this.state.title!="" && this.state.text!="" ){
-        if(this.state.tags==""){
-          this.setState({tags: 0});
-        }
         var storeList = {title: this.state.title , text: this.state.text , tags: this.state.tags};
         this.props.add(storeList);
       }
-      this.setState({title: "",text: "", tags: ""});
+      this.setState({title: "",text: "", tags: 0});
       event.preventDefault();
     }
 
@@ -37,19 +34,19 @@ class SubmitForm extends React.Component {
           <form onSubmit={this.handleSubmit}>
             <label>
               Title:
-              <input name="title" type="text" onChange={this.handleOnChange} value={this.state.title} />
             </label>
+            <input name="title" type="text" onChange={this.handleOnChange} value={this.state.title} />
             <label>
               Description:
               <textarea value={this.state.text} name="description" type="text" onChange={this.handleOnChange} />
             </label>
             <label>
               Select Tag:
-              <select name="tags" type="text" onChange={this.handleOnChange}  >
+              <select name="tags" onChange={this.handleOnChange}  >
                 {this.props.tags.map((x,index) => (<option key={index} value={index}>{x} </option>))}
               </select>
             </label>
-            <input type="submit" value="Submit" />
+            <button bsStyle="primary">Submit</button>
           </form>
         );
     }
@@ -58,13 +55,22 @@ class SubmitForm extends React.Component {
 
 class DisplayListAndForm extends React.Component {
 
+  constructor(props){
+    super(props);
+    this.assignDetails = this.assignDetails.bind(this);
+  }
+
+  assignDetails(e){
+    this.props.onDetailsChange(e.target.id);
+  }
+
   render(){
     return (
 
     <div>
       <SubmitForm add={this.props.add} tags={this.props.tags} />
       <h2>ALL Issues</h2>
-      <div>{this.props.value.map((li,index) => <p key={index}>Title {li.title}  Description {li.text}  Tags {this.props.tags[li.tags]} </p> )} </div>
+      <div>{this.props.value.map((li,index) => <p onClick={this.assignDetails} id={index}  key={index}>Title {li.title}   Tags {this.props.tags[li.tags]} </p> )} </div>
     </div>
     );
   }
@@ -94,12 +100,34 @@ class SearchByTag extends React.Component {
       <div>
         <h2>Add new tag</h2>
         <form onSubmit={this.addnewtag}>
-          <input type="text" name="addtags" onChange={this.handleOnChange} value={this.state.value} />
+          <label>
+            <input type="text" name="addtags" onChange={this.handleOnChange} value={this.state.value} />
+            <input type="submit" value="Submit" />
+          </label>
         </form>
         <h2> All Tags </h2>
         {this.props.tags.map((x,index) => (<li key={index}> {x} </li>))}
       </div>
     );
+  }
+}
+
+class DisplayDetails extends React.Component{
+  render() {
+    const index = this.props.dindex;
+    const myobject = this.props.value[index];
+
+    return (
+    <div>
+      <h2> Issue Details </h2>
+      <h3>Title</h3>
+      <p>{myobject.title}</p>
+      <h3>Description</h3>
+      <p>{myobject.text} </p>
+      <h3>Tags </h3>
+      <p>{this.props.tags[myobject.tags]} </p>
+    </div>
+      ); 
   }
 }
 
@@ -111,12 +139,14 @@ class MainDisplay extends React.Component {
     this.state = {
       isDisplay: true,
       list: [],
-      tags: ["new"]
+      tags: ["new"],
+      details: ""
     };
 
     this.setIsDisplay = this.setIsDisplay.bind(this);
     this.addToList = this.addToList.bind(this);
     this.addtags = this.addtags.bind(this);
+    this.detailsChange = this.detailsChange.bind(this);
   }
 
   addToList(add){
@@ -128,6 +158,7 @@ class MainDisplay extends React.Component {
 
   setIsDisplay(setboolean){
     this.setState({isDisplay: setboolean});
+    this.detailsChange("");
   }
 
   addtags(add){
@@ -136,12 +167,19 @@ class MainDisplay extends React.Component {
     this.setState({tags: newtags});
   }
 
+  detailsChange(detailindex){
+    this.setState({details: detailindex});
+  }
   render() {
     let myDisplay;
-    if(this.state.isDisplay){
-      myDisplay = <DisplayListAndForm tags={this.state.tags}  value={this.state.list} add={this.addToList} />;
+    if(this.state.details==""){
+      if(this.state.isDisplay){
+        myDisplay = <DisplayListAndForm tags={this.state.tags}  value={this.state.list} add={this.addToList} onDetailsChange={this.detailsChange} />;
+      }else{
+        myDisplay = <SearchByTag tags={this.state.tags} onSubmit={this.addtags} />;
+      }
     }else{
-      myDisplay = <SearchByTag tags={this.state.tags} onSubmit={this.addtags} />;
+      myDisplay = <DisplayDetails dindex={this.state.details} value={this.state.list} tags={this.state.tags} />;
     }
 
     return (
