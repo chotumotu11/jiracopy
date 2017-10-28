@@ -1,5 +1,22 @@
 .design{
     padding: 5px;
-    margin: 5px;
+    margin-bottom: 10px;
+    border-radius: 10px;
     background-color: rgb(0, 247, 255);
+}
+
+.paradesign{
+    padding: 10px;
+    text-align: center;
+}
+
+.para2design{
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    background-color: white;
+}
+
+.para3{
+    padding-top: 10px;
 }

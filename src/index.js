@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import {Nav , Navbar  , NavItem , Form , FormGroup , ControlLabel , FormControl , Button , Grid , Row , Col } from 'react-bootstrap';
 import './index.css';
+
 class SubmitForm extends React.Component {
     constructor(props){
         super(props);
@@ -11,6 +12,7 @@ class SubmitForm extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleOnChange = this.handleOnChange.bind(this);
     }
+
 
     handleSubmit(event){
       if(this.state.title!="" && this.state.text!="" ){
@@ -79,7 +81,7 @@ class DisplayListAndForm extends React.Component {
     <div>
       <SubmitForm add={this.props.add} tags={this.props.tags} />
       <h2>ALL Issues</h2>
-      <Row>{this.props.value.map((li,index) => <Col className="design" xs={6} sm={2} onClick={this.assignDetails} id={index}  key={index}>  Title {li.title} <br/> Tags {this.props.tags[li.tags]} </Col>) } </Row>
+      <Row>{this.props.value.map((li,index) => <Col  xs={6} sm={3} key={index}> <div className="design"> <p className="paradesign"> Title {li.title} </p> <p className="para2design"> Tags {this.props.tags[li.tags]} <p className="para3"><Button id={index} bsStyle="primary" onClick={this.assignDetails} >View</Button> </p> </p> </div> </Col>) } </Row>
     </div>
     );
   }
