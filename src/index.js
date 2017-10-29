@@ -139,7 +139,10 @@ class SearchByTag extends React.Component {
 
   addnewtag(e){
     const add = this.state.value;
-    this.props.onSubmit(add);
+    if(add!==""){
+      this.props.onSubmit(add);
+      this.state.value="";
+    }
     e.preventDefault();
   }
 
@@ -175,6 +178,41 @@ class SearchByTag extends React.Component {
 }
 
 class DisplayDetails extends React.Component{
+  constructor(props){
+    super(props);
+    this.state={
+      val: this.props.value[this.props.dindex].tags,
+      index: this.props.dindex
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleOnChange = this.handleOnChange.bind(this);
+    this.getInitialState = this.getInitialState.bind(this);
+    this.close = this.close.bind(this);
+    this.open = this.open.bind(this);
+  }
+
+  getInitialState() {
+    return {showModal: false};
+  }
+
+  close(){
+   this.setState({showModal: false}); 
+  }
+
+  open(){
+    this.setState({showModal: true});
+  }
+
+  handleOnChange(e){
+    this.setState({val: e.target.value, index: e.target.id});
+  }
+
+  handleSubmit(event){
+    this.props.tagedit(this.state.index,this.state.val);
+    this.close();
+    event.preventDefault();
+  }
+
   render() {
     const index = this.props.dindex;
     const myobject = this.props.value[index];
@@ -194,10 +232,27 @@ class DisplayDetails extends React.Component{
           <tr>
             <td> {myobject.title} </td>
             <td>{myobject.text} </td>
-            <td>{this.props.tags[myobject.tags]} </td>
+            <td>{this.props.tags[myobject.tags]} <Button bsStyle="primary" bsSize="small" onClick={this.open}>Edit</Button> </td>
           </tr>
         </tbody>
-      </Table>
+        </Table>
+        <Modal show={this.state.showModal} onHide={this.close}>
+          <Modal.Header closeButton>
+            <Modal.Title> Edit</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={this.handleSubmit}>
+              <FormGroup>
+                <ControlLabel>Select Tag</ControlLabel>
+                {' '}
+                <FormControl componentClass="select" name="tags" onChange={this.handleOnChange} id={index} value={this.state.val}  >
+                  {this.props.tags.map((x,index) => (<option key={index} value={index}>{x} </option>))}
+                </FormControl>
+              </FormGroup>
+              <Button type="submit" bsStyle="warning"  >Submit</Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
     </div>
       ); 
   }
@@ -219,6 +274,13 @@ class MainDisplay extends React.Component {
     this.addToList = this.addToList.bind(this);
     this.addtags = this.addtags.bind(this);
     this.detailsChange = this.detailsChange.bind(this);
+    this.tagedit = this.tagedit.bind(this);
+  }
+
+  tagedit(theindex,thenewtag){
+    const edittag = this.state.list.slice();
+    edittag[theindex].tags = thenewtag;
+    this.setState({list: edittag});
   }
 
   addToList(add){
@@ -251,7 +313,7 @@ class MainDisplay extends React.Component {
         myDisplay = <SearchByTag tags={this.state.tags} onSubmit={this.addtags} />;
       }
     }else{
-      myDisplay = <DisplayDetails dindex={this.state.details} value={this.state.list} tags={this.state.tags} />;
+      myDisplay = <DisplayDetails tagedit={this.tagedit} dindex={this.state.details} value={this.state.list} tags={this.state.tags} />;
     }
 
     return (
