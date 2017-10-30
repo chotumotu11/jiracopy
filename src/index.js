@@ -29,7 +29,7 @@ class SubmitForm extends React.Component {
     }
 
     handleSubmit(event){
-      if(this.state.title!="" && this.state.text!="" ){
+      if(this.state.title!=="" && this.state.text!=="" ){
         var storeList = {title: this.state.title , text: this.state.text , tags: this.state.tags};
         this.props.add(storeList);
       }
@@ -107,7 +107,7 @@ class DisplayListAndForm extends React.Component {
     <div>
       <SubmitForm add={this.props.add} tags={this.props.tags} />
       <h2>Issue List</h2>
-      <Row>{this.props.value.map((li,index) => <Col  xs={6} sm={3} key={index}> <div className="design"> <p className="paradesign"> Title {li.title} </p> <p className="para2design"> Tags {this.props.tags[li.tags]} <p className="para3"><Button id={index} bsStyle="primary" onClick={this.assignDetails} >View</Button> </p> </p> </div> </Col>) } </Row>
+      <Row>{this.props.value.map((li,index) => <Col  xs={6} sm={3} key={index}> <div className="design"> <p className="paradesign"> Title {li.title} </p> <div className="para2design"> Tags {this.props.tags[li.tags]} <p className="para3"><Button id={index} bsStyle="primary" onClick={this.assignDetails} >View</Button> </p> </div> </div> </Col>) } </Row>
     </div>
     );
   }
@@ -141,7 +141,7 @@ class SearchByTag extends React.Component {
     const add = this.state.value;
     if(add!==""){
       this.props.onSubmit(add);
-      this.state.value="";
+      this.setState({value: ""});
     }
     e.preventDefault();
   }
@@ -267,7 +267,8 @@ class MainDisplay extends React.Component {
       isDisplay: true,
       list: [],
       tags: ["new"],
-      details: ""
+      details: "",
+      number: 1
     };
 
     this.setIsDisplay = this.setIsDisplay.bind(this);
@@ -292,6 +293,11 @@ class MainDisplay extends React.Component {
 
   setIsDisplay(setboolean){
     this.setState({isDisplay: setboolean});
+    if(setboolean===true){
+      this.setState({number: 1});
+    }else{
+      this.setState({number: 2});
+    }
     this.detailsChange("");
   }
 
@@ -306,7 +312,7 @@ class MainDisplay extends React.Component {
   }
   render() {
     let myDisplay;
-    if(this.state.details==""){
+    if(this.state.details===""){
       if(this.state.isDisplay){
         myDisplay = <DisplayListAndForm tags={this.state.tags}  value={this.state.list} add={this.addToList} onDetailsChange={this.detailsChange} />;
       }else{
@@ -319,7 +325,7 @@ class MainDisplay extends React.Component {
     return (
       <Grid>
         <Navbar inverse collapseOnSelect >
-          <Nav bsStyle="pills" activeKey={1}>
+          <Nav bsStyle="pills" activeKey={this.state.number}>
             <NavItem eventKey={1} onClick={() => this.setIsDisplay(true)}>Form </NavItem>
             <NavItem eventKey={2} onClick={() => this.setIsDisplay(false)}>Labels </NavItem>
           </Nav>
