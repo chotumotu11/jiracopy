@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import {Nav , Navbar  , NavItem , Form , FormGroup , ControlLabel , FormControl , Button , Grid , Row , Col , Modal , Table } from 'react-bootstrap';
+import {Nav , Navbar  , NavItem , Form , FormGroup , ControlLabel , FormControl , Glyphicon , Button , Grid , Row , Col , Modal , Table } from 'react-bootstrap';
 import './index.css';
 
 class SubmitForm extends React.Component {
@@ -186,6 +186,7 @@ class DisplayDetails extends React.Component{
     this.getInitialState = this.getInitialState.bind(this);
     this.close = this.close.bind(this);
     this.open = this.open.bind(this);
+    this.handletagdelete = this.handletagdelete.bind(this);
   }
 
   getInitialState() {
@@ -212,6 +213,11 @@ class DisplayDetails extends React.Component{
     event.preventDefault();
   }
 
+  handletagdelete(e){
+    //alert(e.target.id);
+    this.props.removetag(this.props.dindex,e.target.id);
+  }
+
   render() {
     const index = this.props.dindex;
     const myobject = this.props.value[index];
@@ -231,7 +237,7 @@ class DisplayDetails extends React.Component{
           <tr>
             <td> {myobject.title} </td>
             <td>{myobject.text} </td>
-            <td>{myobject.tags.map((x,index) => (<span className="spanstyle" key={index}>{x}</span> ) )} <Button bsStyle="primary" bsSize="small" onClick={this.open}>Edit</Button> </td>
+            <td>{myobject.tags.map((li,ind) => <span className="stylespan" key={ind}>{li}<span className="glyphicon glyphicon-remove" id={ind} onClick={this.handletagdelete} ></span></span>)} <Button bsStyle="primary" bsSize="small" onClick={this.open}>Add</Button> </td>
           </tr>
         </tbody>
         </Table>
@@ -276,8 +282,15 @@ class MainDisplay extends React.Component {
     this.detailsChange = this.detailsChange.bind(this);
     this.tagedit = this.tagedit.bind(this);
     this.deletetag = this.deletetag.bind(this);
+    this.displayremovetag = this.displayremovetag.bind(this);
   }
 
+
+  displayremovetag(theindex,thetagindex){
+    const listedit = this.state.list.slice();
+    listedit[theindex].tags.splice(thetagindex,1);
+    this.setState({list: listedit});
+  }
 
   deletetag(tagindex){
     const newtag = this.state.tags.slice();
@@ -343,7 +356,7 @@ class MainDisplay extends React.Component {
         myDisplay = <SearchByTag tags={this.state.tags} onSubmit={this.addtags} deletetag={this.deletetag} />;
       }
     }else{
-      myDisplay = <DisplayDetails tagedit={this.tagedit} dindex={this.state.details} value={this.state.list} tags={this.state.tags} />;
+      myDisplay = <DisplayDetails tagedit={this.tagedit} dindex={this.state.details} value={this.state.list} tags={this.state.tags} removetag={this.displayremovetag}/>;
     }
 
     return (
