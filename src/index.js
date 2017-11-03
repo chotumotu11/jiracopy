@@ -229,7 +229,7 @@ class DisplayDetails extends React.Component{
           <tr>
             <td> {myobject.title} </td>
             <td>{myobject.text} </td>
-            <td><ol>{myobject.tags.map((x,index) => (<li key={index}>{x}</li> ) )}</ol> <Button bsStyle="primary" bsSize="small" onClick={this.open}>Edit</Button> </td>
+            <td>{myobject.tags.map((x,index) => (<span className="spanstyle" key={index}>{x}</span> ) )} <Button bsStyle="primary" bsSize="small" onClick={this.open}>Edit</Button> </td>
           </tr>
         </tbody>
         </Table>
@@ -292,8 +292,10 @@ class MainDisplay extends React.Component {
 
   tagedit(theindex,thenewtag){
     const edittag = this.state.list.slice();
-    edittag[theindex].tags.push(thenewtag);
-    this.setState({list: edittag});
+    if(edittag[theindex].tags.indexOf(thenewtag)===-1){
+      edittag[theindex].tags.push(thenewtag);
+      this.setState({list: edittag});
+    }
   }
 
   addToList(add){
@@ -315,8 +317,13 @@ class MainDisplay extends React.Component {
 
   addtags(add){
     const newtags = this.state.tags.slice();
-    newtags.push(add);
-    this.setState({tags: newtags});
+    // Convert the array to lowercase.
+    const newtags1 = newtags.map((x,index) => {return x.toLowerCase()} );
+    const answer = newtags1.indexOf(add.toLowerCase());
+    if(answer===-1){
+      newtags.push(add);
+      this.setState({tags: newtags});
+    }
   }
 
   detailsChange(detailindex){
