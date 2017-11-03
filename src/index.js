@@ -97,7 +97,7 @@ class DisplayListAndForm extends React.Component {
       <SubmitForm add={this.props.add} tags={this.props.tags} />
       <h2>Issue List</h2>
       <ul>
-        {this.props.value.map((li,index) => <li key={index} className="blackborder"> <h3 id={index}  onClick={this.assignDetails} >{li.title}</h3> Tags: {li.tags.map((pi) => <span className="spanstyle">{pi}</span> )} </li> ) }
+        {this.props.value.map((li,index) => <li key={index} className="blackborder"> <h3 id={index}  onClick={this.assignDetails} >{li.title}</h3> Tags: {li.tags.map((pi,ind) => <span key={ind} className="spanstyle">{pi}</span> )} </li> ) }
       </ul>
     </div>
     );
@@ -114,6 +114,7 @@ class SearchByTag extends React.Component {
     this.getInitialState = this.getInitialState.bind(this);
     this.close = this.close.bind(this);
     this.open = this.open.bind(this);
+    this.handledeletetag = this.handledeletetag.bind(this);
   }
 
   getInitialState() {
@@ -142,6 +143,10 @@ class SearchByTag extends React.Component {
     this.setState({value: e.target.value});
   }
 
+  handledeletetag(e){
+    this.props.deletetag(e.target.id);
+  }
+
   render(){
     return (
       <div>
@@ -163,7 +168,7 @@ class SearchByTag extends React.Component {
           </Modal.Body>
         </Modal>
         <h2> All Tags </h2>
-        <Row> {this.props.tags.map((x,index) => (<Col  xs={6} sm={3}  key={index}> <div className="design center"> {x} </div> </Col>))} </Row>
+        <Row><ul> {this.props.tags.map((x,index) => (<Col key={index}> <li className="blackborder properpadding"> {x} <a id={index} className="pull-right" onClick={this.handledeletetag}>Remove</a> <span className="clearfix"> </span> </li> </Col>))}</ul> </Row>
       </div>
     );
   }
@@ -268,6 +273,21 @@ class MainDisplay extends React.Component {
     this.addtags = this.addtags.bind(this);
     this.detailsChange = this.detailsChange.bind(this);
     this.tagedit = this.tagedit.bind(this);
+    this.deletetag = this.deletetag.bind(this);
+  }
+
+
+  deletetag(tagindex){
+    const newtag = this.state.tags.slice();
+    const tagtext = newtag[tagindex];
+    this.state.list.map((issue,index) => {
+       const delindex = issue.tags.indexOf(tagtext);
+      if(delindex!==-1){
+        issue.tags.splice(delindex,1);
+      }
+    })
+    newtag.splice(tagindex,1);
+    this.setState({tags: newtag});
   }
 
   tagedit(theindex,thenewtag){
@@ -308,7 +328,7 @@ class MainDisplay extends React.Component {
       if(this.state.isDisplay){
         myDisplay = <DisplayListAndForm tags={this.state.tags}  value={this.state.list} add={this.addToList} onDetailsChange={this.detailsChange} />;
       }else{
-        myDisplay = <SearchByTag tags={this.state.tags} onSubmit={this.addtags} />;
+        myDisplay = <SearchByTag tags={this.state.tags} onSubmit={this.addtags} deletetag={this.deletetag} />;
       }
     }else{
       myDisplay = <DisplayDetails tagedit={this.tagedit} dindex={this.state.details} value={this.state.list} tags={this.state.tags} />;
