@@ -205,7 +205,9 @@ class DisplayDetails extends React.Component{
   }
 
   handleSubmit(event){
-    this.props.tagedit(this.state.index,this.state.val);
+    if(this.state.val!==undefined){
+     this.props.tagedit(this.state.index,this.state.val);
+    }
     this.close();
     event.preventDefault();
   }
