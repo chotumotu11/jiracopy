@@ -24,3 +24,16 @@
 .center{
     text-align: center;
 }
+
+.blackborder{
+    margin-top: 3px;
+    border-color: grey;
+    border-style: solid;
+    border-width: 1px;
+    background-color: #f6f8fa;
+    padding-left: 10px;
+}
+
+.spanstyle{
+    padding-left: 5px;
+}

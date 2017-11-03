@@ -8,7 +8,7 @@ import './index.css';
 class SubmitForm extends React.Component {
     constructor(props){
         super(props);
-        this.state = {title: "",text: "", tags: 0 , showModal: false};
+        this.state = {title: "",text: "", tags: [] , showModal: false};
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleOnChange = this.handleOnChange.bind(this);
         this.getInitialState = this.getInitialState.bind(this);
@@ -30,10 +30,11 @@ class SubmitForm extends React.Component {
 
     handleSubmit(event){
       if(this.state.title!=="" && this.state.text!=="" ){
-        var storeList = {title: this.state.title , text: this.state.text , tags: this.state.tags};
+        var storeList = {title: this.state.title , text: this.state.text, tags: this.state.tags};
         this.props.add(storeList);
       }
-      this.setState({title: "",text: "", tags: 0});
+      this.close();
+      this.setState({title: "",text: "", tags: [] });
       event.preventDefault();
     }
 
@@ -41,10 +42,8 @@ class SubmitForm extends React.Component {
       const target = event.target;
       if( target.name=== "title"){
         this.setState({title: target.value});
-      } else if (target.name==="description"){
+      } else{
         this.setState({text: target.value});
-      } else {
-        this.setState({tags: target.value});
       }
     }
     render() {
@@ -70,19 +69,9 @@ class SubmitForm extends React.Component {
                     <FormControl componentClass="textarea" value={this.state.text} name="description" type="text" onChange={this.handleOnChange} />
                   </FormGroup>
                   {' '}
-                  <FormGroup>
-                    <ControlLabel>Select Tag</ControlLabel>
-                    {' '}
-                    <FormControl componentClass="select" name="tags" onChange={this.handleOnChange}  >
-                      {this.props.tags.map((x,index) => (<option key={index} value={index}>{x} </option>))}
-                    </FormControl>
-                  </FormGroup>
                   <Button bsStyle="success" type="submit">Submit</Button>
                 </Form>
               </Modal.Body>
-              <Modal.Footer>
-                <Button onClick={this.close}>Close</Button>
-              </Modal.Footer>
             </Modal>
           </div>
         );
@@ -107,7 +96,9 @@ class DisplayListAndForm extends React.Component {
     <div>
       <SubmitForm add={this.props.add} tags={this.props.tags} />
       <h2>Issue List</h2>
-      <Row>{this.props.value.map((li,index) => <Col  xs={6} sm={3} key={index}> <div className="design"> <p className="paradesign"> Title {li.title} </p> <div className="para2design"> Tags {this.props.tags[li.tags]} <p className="para3"><Button id={index} bsStyle="primary" onClick={this.assignDetails} >View</Button> </p> </div> </div> </Col>) } </Row>
+      <ul>
+        {this.props.value.map((li,index) => <li key={index} className="blackborder"> <h3 id={index}  onClick={this.assignDetails} >{li.title}</h3> Tags: {li.tags.map((pi) => <span className="spanstyle">{pi}</span> )} </li> ) }
+      </ul>
     </div>
     );
   }
@@ -143,6 +134,7 @@ class SearchByTag extends React.Component {
       this.props.onSubmit(add);
       this.setState({value: ""});
     }
+    this.close();
     e.preventDefault();
   }
 
@@ -181,7 +173,7 @@ class DisplayDetails extends React.Component{
   constructor(props){
     super(props);
     this.state={
-      val: this.props.value[this.props.dindex].tags,
+      val: this.props.tags[0],
       index: this.props.dindex
     };
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -232,7 +224,7 @@ class DisplayDetails extends React.Component{
           <tr>
             <td> {myobject.title} </td>
             <td>{myobject.text} </td>
-            <td>{this.props.tags[myobject.tags]} <Button bsStyle="primary" bsSize="small" onClick={this.open}>Edit</Button> </td>
+            <td><ol>{myobject.tags.map((x,index) => (<li key={index}>{x}</li> ) )}</ol> <Button bsStyle="primary" bsSize="small" onClick={this.open}>Edit</Button> </td>
           </tr>
         </tbody>
         </Table>
@@ -246,7 +238,7 @@ class DisplayDetails extends React.Component{
                 <ControlLabel>Select Tag</ControlLabel>
                 {' '}
                 <FormControl componentClass="select" name="tags" onChange={this.handleOnChange} id={index} value={this.state.val}  >
-                  {this.props.tags.map((x,index) => (<option key={index} value={index}>{x} </option>))}
+                  {this.props.tags.map((x,index) => (<option key={index} value={x}>{x} </option>))}
                 </FormControl>
               </FormGroup>
               <Button type="submit" bsStyle="warning"  >Submit</Button>
@@ -280,7 +272,7 @@ class MainDisplay extends React.Component {
 
   tagedit(theindex,thenewtag){
     const edittag = this.state.list.slice();
-    edittag[theindex].tags = thenewtag;
+    edittag[theindex].tags.push(thenewtag);
     this.setState({list: edittag});
   }
 
@@ -323,15 +315,22 @@ class MainDisplay extends React.Component {
     }
 
     return (
-      <Grid>
-        <Navbar inverse collapseOnSelect >
-          <Nav bsStyle="pills" activeKey={this.state.number}>
-            <NavItem eventKey={1} onClick={() => this.setIsDisplay(true)}>Form </NavItem>
-            <NavItem eventKey={2} onClick={() => this.setIsDisplay(false)}>Labels </NavItem>
-          </Nav>
-        </Navbar>
-        {myDisplay}
-      </Grid>
+      <div>
+          <Navbar inverse collapseOnSelect >
+            <Navbar.Header>
+              <Navbar.Brand>
+                <a href="#">Issue List</a>
+              </Navbar.Brand>
+            </Navbar.Header>
+            <Nav  activeKey={this.state.number}>
+              <NavItem eventKey={1} onClick={() => this.setIsDisplay(true)}>Form </NavItem>
+              <NavItem eventKey={2} onClick={() => this.setIsDisplay(false)}>Labels </NavItem>
+            </Nav>
+          </Navbar>
+        <Grid>
+          {myDisplay}
+        </Grid>
+      </div>
     );
   }
 }
