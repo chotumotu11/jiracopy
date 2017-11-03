@@ -282,13 +282,16 @@ class MainDisplay extends React.Component {
   deletetag(tagindex){
     const newtag = this.state.tags.slice();
     const tagtext = newtag[tagindex];
-    this.state.list.map((issue,index) => {
+    const dellist = this.state.list;
+    dellist.map((issue,index) => {
        const delindex = issue.tags.indexOf(tagtext);
       if(delindex!==-1){
         issue.tags.splice(delindex,1);
       }
     })
+
     newtag.splice(tagindex,1);
+    this.setState({list: dellist});
     this.setState({tags: newtag});
   }
 
