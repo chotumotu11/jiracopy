@@ -36,9 +36,16 @@
 }
 
 .spanstyle{
-    padding-left: 5px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 5px; 
 }
 
+.spans{
+    padding: 2px;
+    margin-right: 2px;
+}
 .properpadding{
     padding: 10px;
 }

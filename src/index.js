@@ -8,7 +8,7 @@ import './index.css';
 class SubmitForm extends React.Component {
     constructor(props){
         super(props);
-        this.state = {title: "",text: "", tags: [] , showModal: false};
+        this.state = {title: "",text: "", tags: [], fcolor: [] , bcolor: [] , showModal: false};
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleOnChange = this.handleOnChange.bind(this);
         this.getInitialState = this.getInitialState.bind(this);
@@ -30,11 +30,11 @@ class SubmitForm extends React.Component {
 
     handleSubmit(event){
       if(this.state.title!=="" && this.state.text!=="" ){
-        var storeList = {title: this.state.title , text: this.state.text, tags: this.state.tags};
+        var storeList = {title: this.state.title , text: this.state.text, tags: this.state.tags, fcolor: this.state.fcolor , bcolor: this.state.bcolor};
         this.props.add(storeList);
       }
       this.close();
-      this.setState({title: "",text: "", tags: [] });
+      this.setState({title: "",text: "", tags: [] , fcolor: [] , bcolor: [] });
       event.preventDefault();
     }
 
@@ -91,13 +91,22 @@ class DisplayListAndForm extends React.Component {
   }
 
   render(){
+    const valstyle = [];
+    this.props.value.map((myobject,indi1)=>{
+      const elstyle = [];
+      myobject.tags.map((x,indi2)=>{
+        const newstyle = {color: myobject.fcolor[indi2],backgroundColor: myobject.bcolor[indi2]};
+        elstyle.push(newstyle);
+      })
+      valstyle.push(elstyle);
+    });
     return (
 
     <div>
       <SubmitForm add={this.props.add} tags={this.props.tags} />
       <h2>Issue List</h2>
       <ul>
-        {this.props.value.map((li,index) => <li key={index} className="blackborder"> <h3 id={index}  onClick={this.assignDetails} >{li.title}</h3> Tags: {li.tags.map((pi,ind) => <span key={ind} className="spanstyle">{pi}</span> )} </li> ) }
+        {this.props.value.map((li,index) => <li key={index} className="blackborder"> <h3 id={index}  onClick={this.assignDetails} >{li.title}</h3> Tags: {li.tags.map((pi,ind) => <span style={valstyle[index][ind]} key={ind} className="spans">{pi}</span> )} </li> ) }
       </ul>
     </div>
     );
@@ -108,7 +117,7 @@ class SearchByTag extends React.Component {
 
   constructor(props){
     super(props);
-    this.state={value: "",showModal: false};
+    this.state={value: "",fcolor: "white",bcolor: "#388E3C",showModal: false};
     this.addnewtag = this.addnewtag.bind(this);
     this.handleOnChange = this.handleOnChange.bind(this);
     this.getInitialState = this.getInitialState.bind(this);
@@ -131,16 +140,24 @@ class SearchByTag extends React.Component {
 
   addnewtag(e){
     const add = this.state.value;
+    const fcolor = this.state.fcolor;
+    const bcolor = this.state.bcolor;
     if(add!==""){
-      this.props.onSubmit(add);
-      this.setState({value: ""});
+      this.props.onSubmit(add,fcolor,bcolor);
+      this.setState({value: "",fcolor: "white",bcolor: "#388E3C"});
     }
     this.close();
     e.preventDefault();
   }
 
   handleOnChange(e){
-    this.setState({value: e.target.value});
+    if(e.target.name==="addtags"){
+      this.setState({value: e.target.value});
+    }else if(e.target.name==="fcolor"){
+      this.setState({fcolor: e.target.value});
+    }else{
+      this.setState({bcolor: e.target.value});
+    }
   }
 
   handledeletetag(e){
@@ -148,6 +165,11 @@ class SearchByTag extends React.Component {
   }
 
   render(){
+    const elstyle = [];
+    this.props.tags.map((x,indi) => {
+      const newel = {color: this.props.fcolor[indi],backgroundColor: this.props.bcolor[indi]};
+      elstyle.push(newel);
+    })    
     return (
       <div>
         <p className="center"> <Button bsStyle="primary" bsSize="large" onClick={this.open}>New Tag</Button></p>
@@ -163,12 +185,25 @@ class SearchByTag extends React.Component {
                 <FormControl type="text" name="addtags" onChange={this.handleOnChange} value={this.state.value} />
               </FormGroup>
               {' '}
+              <FormGroup>
+                <ControlLabel>
+                  Font Color:
+                </ControlLabel>
+                {' '}
+                <FormControl type="text" name="fcolor" value={this.state.fcolor} onChange={this.handleOnChange} />
+              </FormGroup>
+              {' '}
+              <FormGroup>
+                <ControlLabel>Background Color: </ControlLabel>
+                {' '}
+                <FormControl type="text" name="bcolor" value={this.state.bcolor} onChange={this.handleOnChange}/>
+              </FormGroup>
               <Button bsStyle="warning" type="submit">Submit</Button>
             </Form>
           </Modal.Body>
         </Modal>
         <h2> All Tags </h2>
-        <Row><ul> {this.props.tags.map((x,index) => (<Col key={index}> <li className="blackborder properpadding"> {x} <a id={index} className="pull-right" onClick={this.handledeletetag}>Remove</a> <span className="clearfix"> </span> </li> </Col>))}</ul> </Row>
+        <Row><ul> {this.props.tags.map((x,index) => ( <Col key={index}>  <li className="blackborder properpadding"> <span className="spanstyle" style={elstyle[index]} >{x}</span> <a id={index} className="pull-right" onClick={this.handledeletetag}>Remove</a> <span className="clearfix"> </span> </li> </Col>))}</ul> </Row>
       </div>
     );
   }
@@ -221,7 +256,11 @@ class DisplayDetails extends React.Component{
   render() {
     const index = this.props.dindex;
     const myobject = this.props.value[index];
-
+    const elstyle = [];
+    myobject.tags.map((x,indi)=>{
+      const newstyle = {color: myobject.fcolor[indi],backgroundColor: myobject.bcolor[indi]};
+      elstyle.push(newstyle);
+    })
     return (
     <div> 
       <h1>Issue Details</h1>
@@ -237,7 +276,7 @@ class DisplayDetails extends React.Component{
           <tr>
             <td> {myobject.title} </td>
             <td>{myobject.text} </td>
-            <td>{myobject.tags.map((li,ind) => <span className="stylespan" key={ind}>{li}<span className="glyphicon glyphicon-remove" id={ind} onClick={this.handletagdelete} ></span></span>)} <Button bsStyle="primary" bsSize="small" onClick={this.open}>Add</Button> </td>
+            <td>{myobject.tags.map((li,ind) => <span style={elstyle[ind]} className="spanstyle" key={ind}>{li}<span className="glyphicon glyphicon-remove" id={ind} onClick={this.handletagdelete} ></span></span>)} <Button bsStyle="primary" bsSize="small" onClick={this.open}>Add</Button> </td>
           </tr>
         </tbody>
         </Table>
@@ -272,6 +311,8 @@ class MainDisplay extends React.Component {
       isDisplay: true,
       list: [],
       tags: ["new"],
+      fcolor: ["white"],
+      bcolor: ["red"],
       details: "",
       number: 1
     };
@@ -289,29 +330,38 @@ class MainDisplay extends React.Component {
   displayremovetag(theindex,thetagindex){
     const listedit = this.state.list.slice();
     listedit[theindex].tags.splice(thetagindex,1);
+    listedit[theindex].fcolor.splice(thetagindex,1);
+    listedit[theindex].bcolor.splice(thetagindex,1);
     this.setState({list: listedit});
   }
 
   deletetag(tagindex){
     const newtag = this.state.tags.slice();
+    const fcolor1 = this.state.fcolor.slice();
+    const bcolor1 = this.state.bcolor.slice();
     const tagtext = newtag[tagindex];
     const dellist = this.state.list;
     dellist.map((issue,index) => {
        const delindex = issue.tags.indexOf(tagtext);
       if(delindex!==-1){
         issue.tags.splice(delindex,1);
+        issue.fcolor.splice(delindex,1);
+        issue.bcolor.splice(delindex,1);
       }
     })
-
+    fcolor1.splice(tagindex,1);
+    bcolor1.splice(tagindex,1);
     newtag.splice(tagindex,1);
-    this.setState({list: dellist});
-    this.setState({tags: newtag});
+    this.setState({list: dellist,tags: newtag,fcolor: fcolor1,bcolor: bcolor1});
   }
 
   tagedit(theindex,thenewtag){
     const edittag = this.state.list.slice();
+    const tagindex = this.state.tags.indexOf(thenewtag);
     if(edittag[theindex].tags.indexOf(thenewtag)===-1){
       edittag[theindex].tags.push(thenewtag);
+      edittag[theindex].fcolor.push(this.state.fcolor[tagindex]);
+      edittag[theindex].bcolor.push(this.state.bcolor[tagindex]);
       this.setState({list: edittag});
     }
   }
@@ -333,14 +383,18 @@ class MainDisplay extends React.Component {
     this.detailsChange("");
   }
 
-  addtags(add){
+  addtags(add,fcolor,bcolor){
     const newtags = this.state.tags.slice();
+    const fc = this.state.fcolor.slice();
+    const bc = this.state.bcolor.slice();
     // Convert the array to lowercase.
     const newtags1 = newtags.map((x,index) => {return x.toLowerCase()} );
     const answer = newtags1.indexOf(add.toLowerCase());
     if(answer===-1){
       newtags.push(add);
-      this.setState({tags: newtags});
+      fc.push(fcolor);
+      bc.push(bcolor);
+      this.setState({tags: newtags,fcolor: fc,bcolor: bc});
     }
   }
 
@@ -353,7 +407,7 @@ class MainDisplay extends React.Component {
       if(this.state.isDisplay){
         myDisplay = <DisplayListAndForm tags={this.state.tags}  value={this.state.list} add={this.addToList} onDetailsChange={this.detailsChange} />;
       }else{
-        myDisplay = <SearchByTag tags={this.state.tags} onSubmit={this.addtags} deletetag={this.deletetag} />;
+        myDisplay = <SearchByTag tags={this.state.tags} fcolor={this.state.fcolor} bcolor={this.state.bcolor} onSubmit={this.addtags} deletetag={this.deletetag} />;
       }
     }else{
       myDisplay = <DisplayDetails tagedit={this.tagedit} dindex={this.state.details} value={this.state.list} tags={this.state.tags} removetag={this.displayremovetag}/>;
