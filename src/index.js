@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import {Nav , Navbar  , NavItem , Form , FormGroup , ControlLabel , FormControl , Glyphicon , Button , Grid , Row , Col , Modal , Table } from 'react-bootstrap';
+import {Nav , Navbar  , NavItem , Form , FormGroup , ControlLabel , FormControl , Button , Grid , Row , Col , Modal , Table } from 'react-bootstrap';
 import './index.css';
 
 class SubmitForm extends React.Component {
@@ -92,9 +92,9 @@ class DisplayListAndForm extends React.Component {
 
   render(){
     const valstyle = [];
-    this.props.value.map((myobject,indi1)=>{
+    this.props.value.forEach((myobject,indi1)=>{
       const elstyle = [];
-      myobject.tags.map((x,indi2)=>{
+      myobject.tags.forEach((x,indi2)=>{
         const newstyle = {color: myobject.fcolor[indi2],backgroundColor: myobject.bcolor[indi2]};
         elstyle.push(newstyle);
       })
@@ -166,7 +166,7 @@ class SearchByTag extends React.Component {
 
   render(){
     const elstyle = [];
-    this.props.tags.map((x,indi) => {
+    this.props.tags.forEach((x,indi) => {
       const newel = {color: this.props.fcolor[indi],backgroundColor: this.props.bcolor[indi]};
       elstyle.push(newel);
     })    
@@ -257,7 +257,7 @@ class DisplayDetails extends React.Component{
     const index = this.props.dindex;
     const myobject = this.props.value[index];
     const elstyle = [];
-    myobject.tags.map((x,indi)=>{
+    myobject.tags.forEach((x,indi)=>{
       const newstyle = {color: myobject.fcolor[indi],backgroundColor: myobject.bcolor[indi]};
       elstyle.push(newstyle);
     })
@@ -341,7 +341,7 @@ class MainDisplay extends React.Component {
     const bcolor1 = this.state.bcolor.slice();
     const tagtext = newtag[tagindex];
     const dellist = this.state.list;
-    dellist.map((issue,index) => {
+    dellist.forEach((issue,index) => {
        const delindex = issue.tags.indexOf(tagtext);
       if(delindex!==-1){
         issue.tags.splice(delindex,1);
@@ -418,7 +418,7 @@ class MainDisplay extends React.Component {
           <Navbar inverse collapseOnSelect >
             <Navbar.Header>
               <Navbar.Brand>
-                <a href="#">Issue List</a>
+                <a>Issue List</a>
               </Navbar.Brand>
             </Navbar.Header>
             <Nav  activeKey={this.state.number}>
