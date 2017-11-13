@@ -261,6 +261,12 @@ class DisplayDetails extends React.Component{
       const newstyle = {color: myobject.fcolor[indi],backgroundColor: myobject.bcolor[indi]};
       elstyle.push(newstyle);
     })
+
+    const alstyle =[];
+    this.props.tags.forEach((x,indi) => {
+      const newstyle = {color: this.props.fcolor[indi], backgroundColor: this.props.bcolor[indi]};
+      alstyle.push(newstyle);
+    })
     return (
     <div> 
       <h1>Issue Details</h1>
@@ -290,7 +296,7 @@ class DisplayDetails extends React.Component{
                 <ControlLabel>Select Tag</ControlLabel>
                 {' '}
                 <FormControl componentClass="select" name="tags" onChange={this.handleOnChange} id={index} value={this.state.val}  >
-                  {this.props.tags.map((x,index) => (<option key={index} value={x}>{x} </option>))}
+                  {this.props.tags.map((x,index) => (<option key={index} style={alstyle}  value={x}>{x} </option>))}
                 </FormControl>
               </FormGroup>
               <Button type="submit" bsStyle="warning"  >Submit</Button>
