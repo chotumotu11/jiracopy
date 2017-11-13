@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import {Nav , Navbar  , NavItem , Form , FormGroup , ControlLabel , FormControl , Button , Grid , Modal , Table } from 'react-bootstrap';
+import {Nav , Navbar  , NavItem , Grid  } from 'react-bootstrap';
 import './index.css';
 import DisplayListAndForm from './components/DisplayListAndForm';
 import DisplayDetails from './components/DisplayDetails';
@@ -19,7 +19,7 @@ class MainDisplay extends React.Component {
           tags: ["new"],
           fcolor: ["white"],
           bcolor: ["red"],
-          details: "",
+          details: "details",
           number: 1
       };
   
@@ -86,7 +86,7 @@ class MainDisplay extends React.Component {
       }else{
           this.setState({number: 2});
       }
-      this.detailsChange("");
+      this.detailsChange("details");
       }
   
       addtags(add,fcolor,bcolor){
@@ -109,7 +109,7 @@ class MainDisplay extends React.Component {
       }
       render() {
       let myDisplay;
-      if(this.state.details===""){
+      if(this.state.details==="details"){
           if(this.state.isDisplay){
           myDisplay = <DisplayListAndForm tags={this.state.tags}  value={this.state.list} add={this.addToList} onDetailsChange={this.detailsChange} />;
           }else{

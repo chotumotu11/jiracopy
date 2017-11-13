@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
-import {Form ,Table , FormGroup , ControlLabel , FormControl , Button , Row , Col , Modal } from 'react-bootstrap';
+import {Form ,Table , FormGroup , ControlLabel , FormControl , Button , Modal } from 'react-bootstrap';
 import '../index.css';
 
 class DisplayDetails extends React.Component{
